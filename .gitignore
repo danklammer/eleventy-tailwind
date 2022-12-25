@@ -1,0 +1,16 @@
+# dependecies installed by npm
+/node_modules
+
+# build artifacts
+/dist
+/src/site/css
+
+# build
+_site
+
+# secrets
+.env
+
+# macOS related files
+.DS_Store
+.nova
