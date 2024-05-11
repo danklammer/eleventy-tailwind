@@ -6,13 +6,15 @@ const terser = require('terser');
 
 module.exports = function (eleventyConfig) {
   
-  // Get Year. Usage: {% year %}
+  // Get Year: {% year %}
   eleventyConfig.addShortcode("year", () => `${new Date().getFullYear()}`);
   
-  // Date helpers
+  // Date helper: {{ page.date | readableDate }}
   eleventyConfig.addFilter('readableDate', dateObj => {
     return DateTime.fromJSDate(dateObj, { zone: 'utc' }).toFormat('LLLL d, y');
   });
+
+  // Date helper: {{ page.date | htmlDate }}
   eleventyConfig.addFilter('htmlDate', dateObj => {
     return DateTime.fromJSDate(dateObj, { zone: 'utc' }).toFormat('y-MM-dd');
   }); 
@@ -22,7 +24,7 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy("./src/img");
   eleventyConfig.addPassthroughCopy('./src/robots.txt');
   
-  // Inline CSS and Purge for production, adapted for Liquid syntax
+  // Inline Tailwind CSS
   eleventyConfig.addTransform('inlineCSS', function(content, outputPath) {
     if (process.env.ELEVENTY_ENV === 'production' && outputPath && outputPath.endsWith('.html')) {
       fs.writeFileSync('temp.html', content);
