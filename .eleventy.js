@@ -7,7 +7,7 @@ const terser = require('terser');
 module.exports = function (eleventyConfig) {
   
   // Get Year: {% year %}
-  eleventyConfig.addShortcode("year", () => `${new Date().getFullYear()}`);
+  eleventyConfig.addShortcode('year', () => `${new Date().getFullYear()}`);
   
   // Date helper: {{ page.date | readableDate }}
   eleventyConfig.addFilter('readableDate', dateObj => {
@@ -20,8 +20,8 @@ module.exports = function (eleventyConfig) {
   }); 
 
   // Static assets to pass through
-  eleventyConfig.addPassthroughCopy("./src/favicon.png");
-  eleventyConfig.addPassthroughCopy("./src/img");
+  eleventyConfig.addPassthroughCopy('./src/favicon.png');
+  eleventyConfig.addPassthroughCopy('./src/img');
   eleventyConfig.addPassthroughCopy('./src/robots.txt');
   
   // Inline Tailwind CSS
@@ -38,12 +38,12 @@ module.exports = function (eleventyConfig) {
   });
   
   // Minify and Inline JS
-  eleventyConfig.addLiquidShortcode("asyncJsMinify", async function(code) {
+  eleventyConfig.addLiquidShortcode('asyncJsMinify', async function(code) {
     try {
       const minified = await terser.minify(code);
       return minified.code;
     } catch (err) {
-      console.error("Error during JS minify:", err);
+      console.error('JS minification error:', err);
       return code;  // Return original code if there's an error
     }
   });
@@ -61,7 +61,7 @@ module.exports = function (eleventyConfig) {
         });
         return minified;
       } catch (err) {
-        console.error("HTML minification error:", err);
+        console.error('HTML minification error:', err);
         return content;
       }
     }
@@ -70,15 +70,15 @@ module.exports = function (eleventyConfig) {
 
   return {
     dir: {
-      input: "src",
-      layouts: "_layouts",
-      includes: "_includes",
-      output: "_site"
+      input: 'src',
+      layouts: '_layouts',
+      includes: '_includes',
+      output: '_site'
     },
     passthroughFileCopy: true,
-    templateFormats : ["liquid", "md"],
-    htmlTemplateEngine : "liquid",
-    markdownTemplateEngine : "liquid",
+    templateFormats : ['liquid', 'md'],
+    htmlTemplateEngine : 'liquid',
+    markdownTemplateEngine : 'liquid',
   };
 
 }
