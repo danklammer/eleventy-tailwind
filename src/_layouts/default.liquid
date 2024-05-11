@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% if title %}{{ title }}{% else %}Default Title{% endif %}</title>
+  {% if description %}<meta name="description" content="{{ description }}"/>{% endif %}
+
+  {% if site.environment == 'production' %}
+    <!-- INLINE CSS -->
+  {% else %}
+    <link rel="stylesheet" href="/styles.css">
+  {% endif %}
+
+  {% assign extra_head = include.head | default: '' %}
+  {{ extra_head }}
+</head>
+<body class="font-sans flex flex-col justify-between text-center h-screen">
+  {% include 'partials/header.liquid' %}
+
+  <main>
+    {{ content }}
+  </main>
+
+  {% include 'partials/footer.liquid' %}
+
+  {% capture js %}
+      {% include 'js/global.js' %}
+  {% endcapture %}
+  <script>
+    {% if site.environment == 'production' %}
+      {% asyncJsMinify js %}
+    {% else %}
+      {{ js }}
+    {% endif %}
+  </script>
+</body>
+</html>
+

@@ -5,9 +5,8 @@ The need for speed, using:
 
 - [Eleventy](https://11ty.dev) for templates and site generation
 - [TailwindCSS](https://tailwindcss.com) for a utility first CSS workflow
-- [PurgeCSS](https://www.purgecss.com/) for optimizing CSS output
 - [Terser](https://www.npmjs.com/package/terser) for a simple JS build pipeline
-- [HTML-Minifier](https://www.npmjs.com/package/html-minifier) for minifying all HTML
+- [HTMLMinifier](https://www.npmjs.com/package/html-minifier-terser) for minifying all HTML
 
 
 ## Prerequisites
@@ -22,7 +21,7 @@ The need for speed, using:
 npm install
 
 # serve locally
-npm run watch
+npm run serve
 ```
 
 
@@ -39,7 +38,7 @@ npm run build
 
 ## Styling with TailwindCSS
 
-While running/developing locally, the `npm run watch` command will recompile the site as files are saved and this includes the CSS pipeline from Tailwind.
+While running/developing locally, the `npm run serve` command will recompile the site as files are saved and this includes the CSS pipeline from Tailwind.
 
 ### Global CSS utilities.
 

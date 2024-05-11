@@ -1,5 +1,5 @@
 module.exports = {
-  content: ["./src/**/*.{html,js,njk,md}"],
+  content: ["./src/**/*.{html,js,liquid,md}"],
   prefixer: false,
   darkMode: 'media', // or 'class'
   theme: {

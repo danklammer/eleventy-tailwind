@@ -1,6 +1,7 @@
 const { DateTime } = require('luxon');
-const { PurgeCSS } = require('purgecss');
-const htmlmin = require('html-minifier');
+const { execSync } = require('child_process');
+const fs = require('fs');
+const htmlMinifier = require('html-minifier-terser');
 const terser = require('terser');
 
 module.exports = function (eleventyConfig) {
@@ -10,60 +11,62 @@ module.exports = function (eleventyConfig) {
   
   // Date helpers
   eleventyConfig.addFilter('readableDate', dateObj => {
-    return DateTime.fromJSDate(dateObj, {
-      zone: 'utc'
-    }).toFormat('LLLL d, y');
+    return DateTime.fromJSDate(dateObj, { zone: 'utc' }).toFormat('LLLL d, y');
   });
   eleventyConfig.addFilter('htmlDate', dateObj => {
-    return DateTime.fromJSDate(dateObj, {
-      zone: 'utc'
-    }).toFormat('y-MM-dd');
-  });
+    return DateTime.fromJSDate(dateObj, { zone: 'utc' }).toFormat('y-MM-dd');
+  }); 
 
   // Static assets to pass through
   eleventyConfig.addPassthroughCopy("./src/favicon.png");
   eleventyConfig.addPassthroughCopy("./src/img");
   eleventyConfig.addPassthroughCopy('./src/robots.txt');
   
-  // When Production Inline CSS and Purge any style not used on that page
-  eleventyConfig.addTransform('inline-and-purge-css', async (content, outputPath) => {
-    if (process.env.ELEVENTY_ENV !== 'production' || !outputPath.endsWith('.html')) {
-      return content;
+  // Inline CSS and Purge for production, adapted for Liquid syntax
+  eleventyConfig.addTransform('inlineCSS', function(content, outputPath) {
+    if (process.env.ELEVENTY_ENV === 'production' && outputPath && outputPath.endsWith('.html')) {
+      fs.writeFileSync('temp.html', content);
+      execSync('npx tailwindcss -o temp.css --content temp.html --minify');
+      const css = fs.readFileSync('temp.css', 'utf8');
+      fs.unlinkSync('temp.html');
+      fs.unlinkSync('temp.css');
+      return content.replace(`<!-- INLINE CSS -->`, `<style>${css}</style>`);
     }
-    let purgeCSSResults = await new PurgeCSS().purge({
-      content: [{ raw: content }],
-      defaultExtractor: content => content.match(/[\w-!#:(),_./\[\]]+(?<!:)/g) || [],
-      css: ['./_site/styles.css'],
-      keyframes: true,
-    });
-    return content.replace('<!-- INLINE CSS-->', '<style>' + purgeCSSResults[0].css + '</style>');
+    return content;
   });
   
   // Minify and Inline JS
-  eleventyConfig.addNunjucksAsyncFilter("jsmin", async function (code, callback) {
+  eleventyConfig.addLiquidShortcode("asyncJsMinify", async function(code) {
     try {
       const minified = await terser.minify(code);
-      return callback(null, minified.code);
+      return minified.code;
     } catch (err) {
-      console.error("Error during terser minify:", err);
-      return callback(err, code);
+      console.error("Error during JS minify:", err);
+      return code;  // Return original code if there's an error
     }
   });
   
-  // When Production, Minify HTML
-  eleventyConfig.addTransform('htmlmin', function (content, outputPath) {
-    if (process.env.ELEVENTY_ENV && outputPath && outputPath.endsWith('.html')) {
-      let minified = htmlmin.minify(content, {
-        useShortDoctype: true,
-        removeComments: true,
-        collapseWhitespace: true,
-      })
-      return minified;
+  // HTML Minification for production
+  eleventyConfig.addTransform('htmlmin', async function(content, outputPath) {
+    if (process.env.ELEVENTY_ENV === 'production' && outputPath && outputPath.endsWith('.html')) {
+      try {
+        const minified = await htmlMinifier.minify(content, {
+          collapseWhitespace: true,
+          removeComments: true,
+          useShortDoctype: true,
+          minifyJS: true,
+          minifyCSS: true
+        });
+        return minified;
+      } catch (err) {
+        console.error("HTML minification error:", err);
+        return content;
+      }
     }
     return content;
   });
 
-  return  {
+  return {
     dir: {
       input: "src",
       layouts: "_layouts",
@@ -71,9 +74,9 @@ module.exports = function (eleventyConfig) {
       output: "_site"
     },
     passthroughFileCopy: true,
-    templateFormats : ["njk", "md"],
-    htmlTemplateEngine : "njk",
-    markdownTemplateEngine : "njk",
+    templateFormats : ["liquid", "md"],
+    htmlTemplateEngine : "liquid",
+    markdownTemplateEngine : "liquid",
   };
 
 }
