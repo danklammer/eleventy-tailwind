@@ -28,7 +28,7 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addTransform('inlineCSS', function(content, outputPath) {
     if (process.env.ELEVENTY_ENV === 'production' && outputPath && outputPath.endsWith('.html')) {
       fs.writeFileSync('temp.html', content);
-      execSync('npx tailwindcss -o temp.css --content temp.html --minify');
+      execSync('npx tailwindcss  -i ./src/_includes/css/styles.css -o temp.css --content temp.html --minify');
       const css = fs.readFileSync('temp.css', 'utf8');
       fs.unlinkSync('temp.html');
       fs.unlinkSync('temp.css');
