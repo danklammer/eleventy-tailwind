@@ -40,6 +40,6 @@ npm run build
 
 While running/developing locally, the `npm run serve` command will recompile the site as files are saved and this includes the CSS pipeline from Tailwind.
 
-### Global CSS utilities.
+### Tailwind directives + custom CSS
 
-A small number of bespoke CSS rules are provided for efficiency of repeated or global classes. These reside in `src/_includes/css/styles.css`
+Tailwind directives + custom CSS are found here `src/_includes/css/styles.css`
