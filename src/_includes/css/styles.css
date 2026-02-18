@@ -1,3 +1,11 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@source "../../**/*.{html,js,liquid,md}";
+
+@theme {
+  --font-sans:
+    "Avenir Next", "Avenir", "Segoe UI", "Helvetica", "helvetica", sans-serif;
+  --color-blueberry-light: #85d7ff;
+  --color-blueberry: #1fb6ff;
+  --color-blueberry-dark: #009eeb;
+}
