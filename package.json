@@ -9,7 +9,7 @@
     "serve:html": "eleventy --serve",
     "clean": "rm -rf _site"
   },
-  "dependencies": {
+  "devDependencies": {
     "@11ty/eleventy": "^3",
     "@tailwindcss/cli": "^4",
     "html-minifier-terser": "^7",
@@ -18,4 +18,3 @@
     "terser": "^5"
   }
 }
-
